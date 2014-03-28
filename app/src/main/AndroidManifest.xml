@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.pophello.app" >
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.example.pophello.ServerHost"
+            android:value="api.soaptag.org" />
+
+        <!-- Feature flags -->
+        <meta-data
+            android:name="com.example.pophello.FeatureLocationMocking"
+            android:value="true" />
+        <meta-data
+            android:name="com.example.pophello.FeatureBugSense"
+            android:value="false" />
+
+        <service
+            android:name=".controller.GeofenceTransitionsService"
+            android:label="Service"
+            android:exported="false">
+        </service>
+        <service
+            android:name=".controller.SignificantLocationUpdateHandlerService"
+            android:label="Service"
+            android:exported="false">
+        </service>
+
+        <activity
+            android:name=".controller.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

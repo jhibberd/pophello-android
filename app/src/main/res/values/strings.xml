@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PopHello</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="button_post_text">Post</string>
+    <string name="tag_create_success">Tag created :)</string>
+    <string name="tag_create_failure">Sorry, unable to create your tag :(</string>
+</resources>
