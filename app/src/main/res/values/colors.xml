@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="app_background_color">#e9eaed</color>
+    <color name="content_background_color">#ffffff</color>
+    <color name="success_background_color">#99cc00</color>
+    <color name="failure_background_color">#ff4444</color>
+    <color name="pending_text_color">#888888</color>
+    <color name="main_text_color">#000000</color>
+    <color name="button_text_color">#0099cc</color>
+    <color name="success_text_color">#ffffff</color>
+    <color name="failure_text_color">#ffffff</color>
+</resources>

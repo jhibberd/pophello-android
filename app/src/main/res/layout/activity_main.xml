@@ -4,6 +4,6 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#33B5E5"
+    android:background="@color/app_background_color"
     tools:context="com.example.pophello.app.controller.MainActivity"
     tools:ignore="MergeRootFrame" />

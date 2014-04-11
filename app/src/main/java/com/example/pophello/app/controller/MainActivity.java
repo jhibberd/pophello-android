@@ -134,6 +134,23 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     /**
+     * Handle the user submitting a request to the server to create a new tag.
+     *
+     * If the app is in the background when this message is received ignore it because we don't
+     * want to stop monitoring for significant location updates and there is no point in updating
+     * the UI. Although this is unlikely in this handler because the latency between the user
+     * submitting a request and this delegate receiving the message doesn't leave much of an
+     * opportunity for the app to be made inactive.
+     */
+    @Override
+    public void onTagCreationSubmitted() {
+        if (!mIsAppVisible) {
+            return;
+        }
+        mMainView.presentPending();
+    }
+
+    /**
      * Handle the user successfully creating a tag.
      *
      * If the app is in the background when this message is received ignore it because we don't
@@ -141,12 +158,12 @@ public class MainActivity extends ActionBarActivity implements
      * the UI.
      */
     @Override
-    public void onTagCreateSucceed() {
+    public void onTagCreationSucceed() {
         if (!mIsAppVisible) {
             return;
         }
         mZoneManager.stopMonitoringLocationChanges();
-        mMainView.presentTagCreateSuccess();
+        mMainView.presentTagCreationSuccess();
     }
 
     /**
@@ -157,11 +174,11 @@ public class MainActivity extends ActionBarActivity implements
      * the UI.
      */
     @Override
-    public void onTagCreateFailure() {
+    public void onTagCreationFailure() {
         if (!mIsAppVisible) {
             return;
         }
         mZoneManager.stopMonitoringLocationChanges();
-        mMainView.presentTagCreateFailure();
+        mMainView.presentTagCreationFailure();
     }
 }

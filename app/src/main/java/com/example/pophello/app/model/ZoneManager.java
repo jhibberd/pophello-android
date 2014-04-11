@@ -31,6 +31,7 @@ public class ZoneManager implements
     }
 
     private static final String TAG = "ZoneManager";
+
     private LocationService mLocationService;
     private TagsStore mTagsStore;
     private TagActiveStore mTagActiveStore;

@@ -24,8 +24,9 @@ public class TagCreateFragment extends Fragment implements
         EndpointContentPOST.OnResponseListener {
 
     public interface OnTagCreateListener {
-        public void onTagCreateSucceed();
-        public void onTagCreateFailure();
+        public void onTagCreationSubmitted();
+        public void onTagCreationSucceed();
+        public void onTagCreationFailure();
     }
 
     private static final String TAG = "TagCreateFragment";
@@ -128,6 +129,7 @@ public class TagCreateFragment extends Fragment implements
 
         mEditTextTag.setEnabled(false);
         mButtonSubmit.setEnabled(false);
+        mListener.onTagCreationSubmitted();
 
         new EndpointContentPOST(
                 context, location.getLongitude(), location.getLatitude(), text.toString(),
@@ -136,11 +138,11 @@ public class TagCreateFragment extends Fragment implements
 
     @Override
     public void onEndpointContentPOSTResponseSuccess() {
-        mListener.onTagCreateSucceed();
+        mListener.onTagCreationSucceed();
     }
 
     @Override
     public void onEndpointContentPOSTResponseFailed() {
-        mListener.onTagCreateFailure();
+        mListener.onTagCreationFailure();
     }
 }

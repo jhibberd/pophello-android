@@ -78,9 +78,17 @@ public class LocationService implements
         mLocationClient.connect();
     }
 
+    /**
+     * Handle connecting to Google Play services.
+     *
+     * Enable location mocking if that feature flag is turned on.
+     */
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "connected to Google Play services");
+        if (new FeatureFlagManager(mContext).isLocationMockingEnabled()) {
+            mLocationClient.setMockMode(true);
+        }
         mConnectionCallbacks.onLocationServiceConnected();
     }
 
@@ -104,7 +112,6 @@ public class LocationService implements
         // when mocking locations the location update interval should be smaller
         LocationRequest locationRequest;
         if (new FeatureFlagManager(mContext).isLocationMockingEnabled()) {
-            mLocationClient.setMockMode(true);
             locationRequest = LocationRequest.create().
                     setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).
                     setFastestInterval(5000).

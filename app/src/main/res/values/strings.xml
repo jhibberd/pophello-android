@@ -6,4 +6,5 @@
     <string name="button_post_text">Post</string>
     <string name="tag_create_success">Tag created :)</string>
     <string name="tag_create_failure">Sorry, unable to create your tag :(</string>
+    <string name="pending">Thinking…</string>
 </resources>
