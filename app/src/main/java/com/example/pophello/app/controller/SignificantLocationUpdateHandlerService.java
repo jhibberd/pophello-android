@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.bugsense.trace.BugSenseHandler;
 import com.example.pophello.app.model.Tag;
-import com.example.pophello.app.model.TagNotification;
 import com.example.pophello.app.model.ZoneManager;
 import com.example.pophello.app.model.server.EndpointContentGET;
 import com.example.pophello.app.utility.FeatureFlagManager;
@@ -18,7 +17,7 @@ import com.google.android.gms.location.LocationClient;
 public class SignificantLocationUpdateHandlerService extends Service implements
         ZoneManager.ConnectionCallbacks,
         EndpointContentGET.OnResponseListener,
-        ZoneManager.OnEstablishedZoneListener {
+        ZoneManager.OnUpdatedZoneListener {
 
     private static final String TAG = "SignificantLocationUpdateHandlerService";
 
@@ -100,19 +99,14 @@ public class SignificantLocationUpdateHandlerService extends Service implements
      * Remove geofences for the expired tags that are currently stored locally. If a tag appears
      * in the old and new set then don't delete it's geofence to prevent an undesired geofence
      * enter event from potentially being triggered.
-     *
-     * TODO: We may need to revise dismissing the notification here. What if the device stays in
-     * the same geofence as we transition between two zones? We don't want to notification being
-     * dispatched twice.
      */
     @Override
     public void onEndpointContentGETResponseSuccess(Tag[] tags) {
-        new TagNotification(this).dismissAll();
-        mZoneManager.rebuildZone(tags);
+        mZoneManager.updateZone(tags);
     }
 
     @Override
-    public void onEstablishedZone() {
+    public void onUpdatedZone() {
         stopSelf();
     }
 

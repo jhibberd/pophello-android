@@ -71,8 +71,8 @@ public class MainView {
             return;
         }
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-        //fragmentTransaction.setCustomAnimations(
-        //        R.animator.enter_from_right, R.animator.exit_to_left);
+        fragmentTransaction.setCustomAnimations(
+                R.animator.enter_from_right, R.animator.exit_to_left);
         fragmentTransaction.remove(mVisibleFragment);
         fragmentTransaction.commit();
         mVisibleFragment = null;

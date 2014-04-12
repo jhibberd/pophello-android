@@ -41,8 +41,8 @@ public class LocationService implements
         public void onDeviceUpdatedPreciseLocation(Location location);
     }
 
-    public interface OnEstablishedGeofencesListener {
-        public void onEstablishedGeofences();
+    public interface OnUpdatedGeofencesListener {
+        public void onUpdatedGeofences();
     }
 
     private enum LocationUpdateMode {
@@ -57,7 +57,7 @@ public class LocationService implements
     private LocationClient mLocationClient;
     private ConnectionCallbacks mConnectionCallbacks;
     private OnPreciseLocationUpdateListener mOnPreciseLocationUpdateListener;
-    private OnEstablishedGeofencesListener mOnEstablishedGeofencesListener;
+    private OnUpdatedGeofencesListener mOnUpdatedGeofencesListener;
     private LocationUpdateMode mLocationUpdateMode;
     private PendingIntent mSignificantLocationUpdatePendingIntent;
 
@@ -65,12 +65,12 @@ public class LocationService implements
             Context context,
             ConnectionCallbacks connectionCallbacks,
             OnPreciseLocationUpdateListener preciseLocationUpdateListener,
-            OnEstablishedGeofencesListener establishedGeofencesListener) {
+            OnUpdatedGeofencesListener updatedGeofencesListener) {
         mContext = context;
         mLocationClient = new LocationClient(context, this, this);
         mConnectionCallbacks = connectionCallbacks;
         mOnPreciseLocationUpdateListener = preciseLocationUpdateListener;
-        mOnEstablishedGeofencesListener = establishedGeofencesListener;
+        mOnUpdatedGeofencesListener = updatedGeofencesListener;
         mLocationUpdateMode = LocationUpdateMode.NONE;
     }
 
@@ -220,7 +220,7 @@ public class LocationService implements
                     createGeofences(tagsOld, tagsNew);
                 } else {
                     Log.e(TAG, "failed to remove geofence");
-                    mOnEstablishedGeofencesListener.onEstablishedGeofences();
+                    mOnUpdatedGeofencesListener.onUpdatedGeofences();
                 }
             }
 
@@ -247,7 +247,7 @@ public class LocationService implements
 
         Tag[] tagsRevealed = getTagSetDifference(tagsNew, tagsOld);
         if (tagsRevealed.length == 0) {
-            mOnEstablishedGeofencesListener.onEstablishedGeofences(); // no geofences to create
+            mOnUpdatedGeofencesListener.onUpdatedGeofences(); // no geofences to create
             return;
         }
 
@@ -279,7 +279,7 @@ public class LocationService implements
                 } else {
                     Log.e(TAG, "failed to add geofence");
                 }
-                mOnEstablishedGeofencesListener.onEstablishedGeofences();
+                mOnUpdatedGeofencesListener.onUpdatedGeofences();
             }
         });
     }

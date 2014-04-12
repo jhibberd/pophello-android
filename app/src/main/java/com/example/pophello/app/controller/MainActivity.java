@@ -1,6 +1,11 @@
 package com.example.pophello.app.controller;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Window;
@@ -19,7 +24,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 
 public class MainActivity extends ActionBarActivity implements
         ZoneManager.ConnectionCallbacks,
-        ZoneManager.OnEstablishedZoneListener,
+        ZoneManager.OnUpdatedZoneListener,
         TagCreateFragment.OnTagCreateListener {
 
     private static final String TAG = "MainActivity";
@@ -53,7 +58,8 @@ public class MainActivity extends ActionBarActivity implements
         mMainView = new MainView(getFragmentManager());
     }
 
-    /** Handle the activity coming back into view.
+    /**
+     * Handle the activity coming back into view.
      *
      * Due to complications with save instance state any fragment transactions should take place
      * here and not in `onResume` or async callbacks:
@@ -72,6 +78,11 @@ public class MainActivity extends ActionBarActivity implements
     protected void onPostResume() {
 
         super.onPostResume();
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mBroadcastReceiverGeofenceEnter,
+                new IntentFilter(GeofenceTransitionsService.ACTION_GEOFENCE_ENTER));
+
         new TagNotification(this).dismissAll();
         Tag tagActive = mZoneManager.getActiveTag();
 
@@ -116,6 +127,8 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     protected void onPause() {
         mIsAppVisible = false;
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(
+                mBroadcastReceiverGeofenceEnter);
         mZoneManager.startMonitoringSignificantLocationChanges();
         mTagsStore.close();
         mMainView.presentNothing();
@@ -129,8 +142,8 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void onEstablishedZone() {
-        Log.i(TAG, "established zone (which may be empty)");
+    public void onUpdatedZone() {
+        Log.i(TAG, "updated zone");
     }
 
     /**
@@ -181,4 +194,15 @@ public class MainActivity extends ActionBarActivity implements
         mZoneManager.stopMonitoringLocationChanges();
         mMainView.presentTagCreationFailure();
     }
+
+    /**
+     * Handle geofence enter events sent by the `GeofenceTransitionService`.
+     *
+     * No action is taken but receiving the event informs the service that the app is in the
+     * foreground and prevents it from dispatching a notification.
+     */
+    private BroadcastReceiver mBroadcastReceiverGeofenceEnter = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {}
+    };
 }

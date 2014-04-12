@@ -2,6 +2,7 @@ package com.example.pophello.app.controller;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.bugsense.trace.BugSenseHandler;
@@ -16,6 +17,7 @@ import java.util.List;
 
 public class GeofenceTransitionsService extends IntentService {
 
+    public static final String ACTION_GEOFENCE_ENTER = "com.example.pophello.app.GEOFENCE_ENTER";
     private static final String TAG = "GeofenceTransitionsService";
 
     private ZoneManager mZoneManager;
@@ -67,8 +69,8 @@ public class GeofenceTransitionsService extends IntentService {
      * being killed. When the app is launched it can check quickly in local storage to see which
      * tag (if any) should be shown to the user.
      *
-     * The app only monitors geofences when running in the background so dispatch a notification to
-     * inform the user.
+     * Broadcast that the geofence has been entered. If the main activity doesn't receive the
+     * broadcast then it's running in the background so dispatch a notification.
      *
      * The geofence request ID is the tag ID.
      */
@@ -84,7 +86,11 @@ public class GeofenceTransitionsService extends IntentService {
         }
         mZoneManager.onEnterTagRegion(tag);
 
-        new TagNotification(this).present(tag);
+        Intent intent = new Intent(ACTION_GEOFENCE_ENTER);
+        boolean received = LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        if (!received) {
+            new TagNotification(this).present(tag);
+        }
     }
 
     /**

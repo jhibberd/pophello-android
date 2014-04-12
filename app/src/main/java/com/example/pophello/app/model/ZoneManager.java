@@ -9,6 +9,8 @@ import com.example.pophello.app.model.data.LocalStorageUnavailableException;
 import com.example.pophello.app.model.data.TagActiveStore;
 import com.example.pophello.app.model.data.TagsStore;
 
+import java.util.Arrays;
+
 /**
  * Manages the zone by coordinating between the location service, server, tags store and active tag
  * store.
@@ -16,14 +18,14 @@ import com.example.pophello.app.model.data.TagsStore;
 public class ZoneManager implements
         LocationService.ConnectionCallbacks,
         LocationService.OnPreciseLocationUpdateListener,
-        LocationService.OnEstablishedGeofencesListener {
+        LocationService.OnUpdatedGeofencesListener {
 
     public interface ConnectionCallbacks {
         public void onZoneManagerConnectedToLocationServices();
     }
 
-    public interface OnEstablishedZoneListener {
-        public void onEstablishedZone();
+    public interface OnUpdatedZoneListener {
+        public void onUpdatedZone();
     }
 
     private enum LocationUpdateMode {
@@ -32,23 +34,25 @@ public class ZoneManager implements
 
     private static final String TAG = "ZoneManager";
 
+    private Context mContext;
     private LocationService mLocationService;
     private TagsStore mTagsStore;
     private TagActiveStore mTagActiveStore;
     private ConnectionCallbacks mConnectionCallbacks;
-    private OnEstablishedZoneListener mOnEstablishedZoneListener;
+    private OnUpdatedZoneListener mOnUpdatedZoneListener;
     private Location mLastPreciseLocation;
     private LocationUpdateMode mLocationUpdateMode;
 
     public ZoneManager(
             Context context,
             ConnectionCallbacks connectionCallbacks,
-            OnEstablishedZoneListener establishedZoneListener) {
+            OnUpdatedZoneListener updatedZoneListener) {
+        mContext = context;
         mLocationService = new LocationService(context, this, this, this);
         mTagsStore = new TagsStore(context);
         mTagActiveStore = new TagActiveStore(context);
         mConnectionCallbacks = connectionCallbacks;
-        mOnEstablishedZoneListener = establishedZoneListener;
+        mOnUpdatedZoneListener = updatedZoneListener;
         mLocationUpdateMode = LocationUpdateMode.NONE;
     }
 
@@ -82,7 +86,6 @@ public class ZoneManager implements
             case PRECISE:
                 return;
             case SIGNIFICANT:
-                stopMonitoringSignificantLocationChanges();
                 break;
         }
         mLocationService.startMonitoringPreciseLocationChanges();
@@ -97,15 +100,10 @@ public class ZoneManager implements
                 stopMonitoringPreciseLocationChanges();
                 break;
             case SIGNIFICANT:
-                stopMonitoringSignificantLocationChanges();
                 break;
         }
         mLocationService.stopMonitoringLocationChanges();
         mLocationUpdateMode = LocationUpdateMode.NONE;
-    }
-
-    private void stopMonitoringSignificantLocationChanges() {
-        clearZone();
     }
 
     private void stopMonitoringPreciseLocationChanges() {
@@ -157,40 +155,37 @@ public class ZoneManager implements
     }
 
     /**
-     * Clear the existing zone.
-     *
-     * In response to significant location monitoring being stopped. Clearing a zone is logically
-     * equivalent to rebuilding a zone with no tags.
-     */
-    private void clearZone() {
-        rebuildZone(new Tag[0]);
-    }
-
-    /**
      * Rebuild the zone with a new list of tags.
      *
      * The list of tags may be empty (as is the case with clearing the zone) or will contain tags
      * retrieved from the server.
      */
-    public void rebuildZone(Tag[] tagsNew) {
+    public void updateZone(Tag[] tagsNew) {
 
         Tag[] tagsOld;
         try {
-            mTagActiveStore.clear();
             tagsOld = mTagsStore.fetchAll();
             mTagsStore.clear();
             mTagsStore.put(tagsNew);
+            Tag tagActive = mTagActiveStore.fetch();
+            boolean keepTagActive =
+                    tagActive != null && Arrays.asList(tagsNew).contains(tagActive);
+            if (!keepTagActive && tagActive != null) {
+                mTagActiveStore.clear();
+                new TagNotification(mContext).dismissAll();
+            }
+
         } catch (LocalStorageUnavailableException e) {
             Log.e(TAG, "local storage is unavailable");
-            mOnEstablishedZoneListener.onEstablishedZone();
+            mOnUpdatedZoneListener.onUpdatedZone();
             return;
         }
         mLocationService.establishGeofences(tagsOld, tagsNew);
     }
 
     @Override
-    public void onEstablishedGeofences() {
-        mOnEstablishedZoneListener.onEstablishedZone();
+    public void onUpdatedGeofences() {
+        mOnUpdatedZoneListener.onUpdatedZone();
     }
 
     public void disconnect() {

@@ -23,10 +23,10 @@
         <!-- Feature flags -->
         <meta-data
             android:name="com.example.pophello.FeatureLocationMocking"
-            android:value="true" />
+            android:value="false" />
         <meta-data
             android:name="com.example.pophello.FeatureBugSense"
-            android:value="false" />
+            android:value="true" />
 
         <service
             android:name=".controller.GeofenceTransitionsService"
