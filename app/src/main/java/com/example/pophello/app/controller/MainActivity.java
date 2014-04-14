@@ -13,14 +13,12 @@ import android.view.Window;
 import com.bugsense.trace.BugSenseHandler;
 import com.example.pophello.app.R;
 import com.example.pophello.app.model.MainView;
+import com.example.pophello.app.model.ServiceAvailabilityMonitor;
 import com.example.pophello.app.model.Tag;
 import com.example.pophello.app.model.TagNotification;
 import com.example.pophello.app.model.ZoneManager;
-import com.example.pophello.app.model.data.TagsStore;
 import com.example.pophello.app.utility.FeatureFlagManager;
 import com.example.pophello.app.view.TagCreateFragment;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 
 public class MainActivity extends ActionBarActivity implements
         ZoneManager.ConnectionCallbacks,
@@ -34,9 +32,9 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     private ZoneManager mZoneManager;
-    private TagsStore mTagsStore;
     private MainView mMainView;
     private StartupMode mStartupMode;
+    private ServiceAvailabilityMonitor mServiceAvailabilityMonitor;
     private boolean mIsAppVisible;
 
     /**
@@ -54,8 +52,8 @@ public class MainActivity extends ActionBarActivity implements
         setContentView(R.layout.activity_main);
 
         mZoneManager = new ZoneManager(this, this, this);
-        mTagsStore = new TagsStore(this);
         mMainView = new MainView(getFragmentManager());
+        mServiceAvailabilityMonitor = new ServiceAvailabilityMonitor(this);
     }
 
     /**
@@ -78,14 +76,22 @@ public class MainActivity extends ActionBarActivity implements
     protected void onPostResume() {
 
         super.onPostResume();
-
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 mBroadcastReceiverGeofenceEnter,
                 new IntentFilter(GeofenceTransitionsService.ACTION_GEOFENCE_ENTER));
-
         new TagNotification(this).dismissAll();
-        Tag tagActive = mZoneManager.getActiveTag();
 
+        mServiceAvailabilityMonitor.checkAvailability();
+        ServiceAvailabilityMonitor.State state = mServiceAvailabilityMonitor.getState();
+        if (state == ServiceAvailabilityMonitor.State.AVAILABLE) {
+            initUI();
+        } else {
+            mMainView.presentServiceUnavailable(state);
+        }
+    }
+
+    private void initUI() {
+        Tag tagActive = mZoneManager.getActiveTag();
         if (tagActive == null) {
             mMainView.presentTagCreate();
             mStartupMode = StartupMode.CREATE;
@@ -94,13 +100,6 @@ public class MainActivity extends ActionBarActivity implements
             mMainView.presentTag(tagActive);
             mStartupMode = StartupMode.TAG;
         }
-
-        // TODO: part of service availability monitor
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            Log.e(TAG, "Google Play services is unavailable");
-        }
-
         mZoneManager.connectToLocationServices();
     }
 
@@ -124,13 +123,21 @@ public class MainActivity extends ActionBarActivity implements
 
     // TODO: does it work if we connect in resume and disconnect in pause. probably not with
     // mock locations but maybe with real locations?
+
+    /**
+     * Handle the app moving into the background.
+     *
+     * If the service isn't available then don't attempt to monitor for significant location
+     * changes.
+     */
     @Override
     protected void onPause() {
         mIsAppVisible = false;
         LocalBroadcastManager.getInstance(this).unregisterReceiver(
                 mBroadcastReceiverGeofenceEnter);
-        mZoneManager.startMonitoringSignificantLocationChanges();
-        mTagsStore.close();
+        if (mServiceAvailabilityMonitor.getState() == ServiceAvailabilityMonitor.State.AVAILABLE) {
+            mZoneManager.startMonitoringSignificantLocationChanges();
+        }
         mMainView.presentNothing();
         super.onPause();
     }

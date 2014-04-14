@@ -8,23 +8,22 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin">
 
-    <EditText
-        android:background="@drawable/background_tag_create"
-        android:id="@+id/tag_text"
-        android:textColor="@color/main_text_color"
+    <TextView
+        android:background="@drawable/background_service_unavailable"
+        android:id="@+id/message"
         android:textSize="22sp"
-        android:gravity="top"
+        android:textColor="@color/failure_text_color"
         android:layout_width="match_parent"
         android:padding="15dp"
-        android:layout_height="150dp"
-        android:inputType="textMultiLine" />
+        android:layout_height="150dp" />
     <Button
-        android:id="@+id/submit_button"
+        android:id="@+id/button_fix"
         android:textSize="22sp"
         android:layout_width="match_parent"
-        android:text="@string/button_post_text"
-        android:textColor="@color/button_text_color"
+        android:textStyle="bold"
+        android:text="@string/service_unavailable_fix"
+        android:textColor="@color/failure_text_color"
         android:layout_height="54dp"
-        android:background="@drawable/button" />
+        android:background="@drawable/button_warning" />
 
 </LinearLayout>

@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 
 import com.example.pophello.app.R;
 import com.example.pophello.app.view.PendingFragment;
+import com.example.pophello.app.view.ServiceUnavailableFragment;
 import com.example.pophello.app.view.TagCreateFailureFragment;
 import com.example.pophello.app.view.TagCreateFragment;
 import com.example.pophello.app.view.TagCreateSuccessFragment;
@@ -45,6 +46,11 @@ public class MainView {
 
     public void presentPending() {
         Fragment fragment = new PendingFragment();
+        presentFragment(fragment);
+    }
+
+    public void presentServiceUnavailable(ServiceAvailabilityMonitor.State state) {
+        Fragment fragment = ServiceUnavailableFragment.instance(state);
         presentFragment(fragment);
     }
 
