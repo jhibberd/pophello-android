@@ -18,6 +18,9 @@
         android:padding="15dp"
         android:layout_height="150dp"
         android:inputType="textMultiLine" />
+    <com.example.pophello.app.view.UserView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
     <Button
         android:id="@+id/submit_button"
         android:textSize="22sp"

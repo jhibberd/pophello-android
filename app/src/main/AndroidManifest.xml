@@ -19,6 +19,9 @@
         <meta-data
             android:name="com.example.pophello.ServerHost"
             android:value="api.soaptag.org" />
+        <meta-data
+            android:name="com.example.pophello.Username"
+            android:value="Annie" />
 
         <!-- Feature flags -->
         <meta-data

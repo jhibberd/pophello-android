@@ -9,4 +9,5 @@
     <color name="button_text_color">#0099cc</color>
     <color name="success_text_color">#ffffff</color>
     <color name="failure_text_color">#ffffff</color>
+    <color name="user_image_placeholder_color">#f2f2f2</color>
 </resources>
