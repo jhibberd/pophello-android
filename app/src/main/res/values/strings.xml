@@ -9,6 +9,5 @@
     <string name="pending">Thinking…</string>
     <string name="service_unavailable_fix">Fix</string>
     <string name="service_unavailable_google_play_services_missing">Google play services is missing.</string>
-    <string name="service_unavailable_location_provider_gps_missing">Turn on the GPS location provider.</string>
     <string name="service_unavailable_location_provider_network_missing">Turn on the network location provider.</string>
 </resources>

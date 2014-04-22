@@ -6,17 +6,22 @@ import android.location.LocationManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+/**
+ * Monitors device settings, features and services to determine whether this app has everything it
+ * needs to run.
+ *
+ * GPS is no longer a requirement has the app seems to function fine without it and GPS consumes
+ * a large amount of power.
+ */
 public class ServiceAvailabilityMonitor {
 
     public enum State {
         AVAILABLE,
         GOOGLE_PLAY_SERVICES_MISSING,
-        LOCATION_PROVIDER_GPS_DISABLED,
         LOCATION_PROVIDER_NETWORK_DISABLED
     }
 
     private boolean mIsGooglePlayServicesAvailable;
-    private boolean mIsLocationProviderGPSEnabled;
     private boolean mIsLocationProviderNetworkEnabled;
 
     private final Context mContext;
@@ -29,7 +34,6 @@ public class ServiceAvailabilityMonitor {
 
     public void checkAvailability() {
         checkIsGooglePlayServicesAvailable();
-        checkIsLocationProviderGPSEnabled();
         checkIsLocationProviderNetworkEnabled();
     }
 
@@ -43,9 +47,6 @@ public class ServiceAvailabilityMonitor {
         if (!mIsGooglePlayServicesAvailable) {
             return State.GOOGLE_PLAY_SERVICES_MISSING;
         }
-        if (!mIsLocationProviderGPSEnabled) {
-            return State.LOCATION_PROVIDER_GPS_DISABLED;
-        }
         if (!mIsLocationProviderNetworkEnabled) {
             return State.LOCATION_PROVIDER_NETWORK_DISABLED;
         }
@@ -55,11 +56,6 @@ public class ServiceAvailabilityMonitor {
     private void checkIsGooglePlayServicesAvailable() {
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(mContext);
         mIsGooglePlayServicesAvailable = status == ConnectionResult.SUCCESS;
-    }
-
-    private void checkIsLocationProviderGPSEnabled() {
-        mIsLocationProviderGPSEnabled =
-                mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
     private void checkIsLocationProviderNetworkEnabled() {

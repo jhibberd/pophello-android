@@ -60,10 +60,6 @@ public class ServiceUnavailableFragment extends Fragment implements View.OnClick
                 messageText = getResources().getString(
                         R.string.service_unavailable_google_play_services_missing);
                 break;
-            case LOCATION_PROVIDER_GPS_DISABLED:
-                messageText = getResources().getString(
-                        R.string.service_unavailable_location_provider_gps_missing);
-                break;
             case LOCATION_PROVIDER_NETWORK_DISABLED:
                 messageText = getResources().getString(
                         R.string.service_unavailable_location_provider_network_missing);
@@ -93,9 +89,6 @@ public class ServiceUnavailableFragment extends Fragment implements View.OnClick
             case GOOGLE_PLAY_SERVICES_MISSING:
                 fixGooglePlayServicesMissing();
                 break;
-            case LOCATION_PROVIDER_GPS_DISABLED:
-                fixLocationProviderGPSDisabled();
-                break;
             case LOCATION_PROVIDER_NETWORK_DISABLED:
                 fixLocationProviderNetworkDisabled();
                 break;
@@ -107,11 +100,6 @@ public class ServiceUnavailableFragment extends Fragment implements View.OnClick
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity());
         Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, getActivity(), requestCode);
         dialog.show();
-    }
-
-    private void fixLocationProviderGPSDisabled() {
-        Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-        startActivity(intent);
     }
 
     private void fixLocationProviderNetworkDisabled() {
