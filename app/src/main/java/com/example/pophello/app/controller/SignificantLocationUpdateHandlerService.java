@@ -10,13 +10,14 @@ import android.util.Log;
 import com.bugsense.trace.BugSenseHandler;
 import com.example.pophello.app.model.Tag;
 import com.example.pophello.app.model.ZoneManager;
-import com.example.pophello.app.model.server.EndpointContentGET;
+import com.example.pophello.app.model.server.EndpointTagsGET;
+import com.example.pophello.app.utility.CurrentUser;
 import com.example.pophello.app.utility.FeatureFlagManager;
 import com.google.android.gms.location.LocationClient;
 
 public class SignificantLocationUpdateHandlerService extends Service implements
         ZoneManager.ConnectionCallbacks,
-        EndpointContentGET.OnResponseListener,
+        EndpointTagsGET.OnResponseListener,
         ZoneManager.OnUpdatedZoneListener {
 
     private static final String TAG = "SignificantLocationUpdateHandlerService";
@@ -89,8 +90,10 @@ public class SignificantLocationUpdateHandlerService extends Service implements
     @Override
     public void onZoneManagerConnectedToLocationServices() {
         Log.i(TAG, "processing location update " + mLocation.toString());
-        new EndpointContentGET(
-                this, mLocation.getLongitude(), mLocation.getLatitude(), this).call();
+        CurrentUser currentUser = new CurrentUser(this);
+        new EndpointTagsGET(
+                this, currentUser.getUserId(), mLocation.getLongitude(), mLocation.getLatitude(),
+                this).call();
     }
 
     /**
@@ -101,7 +104,7 @@ public class SignificantLocationUpdateHandlerService extends Service implements
      * enter event from potentially being triggered.
      */
     @Override
-    public void onEndpointContentGETResponseSuccess(Tag[] tags) {
+    public void onEndpointTagsGETResponseSuccess(Tag[] tags) {
         mZoneManager.updateZone(tags);
     }
 
@@ -111,7 +114,7 @@ public class SignificantLocationUpdateHandlerService extends Service implements
     }
 
     @Override
-    public void onEndpointContentGETResponseFailed() {
+    public void onEndpointTagsGETResponseFailed() {
         stopSelf();
     }
 

@@ -30,6 +30,8 @@ public class TagActiveStore {
         values.put(StoreManager.COLUMN_LATITUDE, tag.latitude);
         values.put(StoreManager.COLUMN_LONGITUDE, tag.longitude);
         values.put(StoreManager.COLUMN_TEXT, tag.text);
+        values.put(StoreManager.COLUMN_USER_ID, tag.userId);
+        values.put(StoreManager.COLUMN_USER_IMAGE_URL, tag.userImageUrl);
         if (mDatabase.insert(StoreManager.TABLE_TAG_ACTIVE, null, values) == -1) {
             Log.e(TAG, "failed to write active tag to database");
         }
@@ -56,7 +58,7 @@ public class TagActiveStore {
     /**
      * Clear the active tag from local storage.
      */
-    public void clearIfActive(Tag tag) throws LocalStorageUnavailableException {
+    public void clearIfActive(String tagId) throws LocalStorageUnavailableException {
         open();
         Tag tagActive = fetch();
         // this shouldn't happen because to exit a tag the device must have entered it first
@@ -64,7 +66,7 @@ public class TagActiveStore {
             Log.e(TAG, "Attempt to clear the active data from local storage, but none exists");
             return;
         }
-        if (tagActive.id.equals(tag.id)) {
+        if (tagActive.id.equals(tagId)) {
             clear();
         }
     }
@@ -100,6 +102,8 @@ public class TagActiveStore {
         double latitude = cursor.getDouble(1);
         double longitude = cursor.getDouble(2);
         String text = cursor.getString(3);
-        return new Tag(id, latitude, longitude, text);
+        String userId = cursor.getString(4);
+        String userImageUrl = cursor.getString(5);
+        return new Tag(id, latitude, longitude, text, userId, userImageUrl);
     }
 }

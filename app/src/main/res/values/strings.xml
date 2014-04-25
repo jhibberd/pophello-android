@@ -5,7 +5,7 @@
     <string name="button_post_text">Post</string>
     <string name="button_acknowledge_text">Ok</string>
     <string name="tag_create_success">Tag created :)</string>
-    <string name="tag_create_failure">Sorry, unable to create your tag :(</string>
+    <string name="server_error">Uh oh, something went horribly wrong</string>
     <string name="pending">Thinking…</string>
     <string name="service_unavailable_fix">Fix</string>
     <string name="service_unavailable_google_play_services_missing">Google play services is missing.</string>

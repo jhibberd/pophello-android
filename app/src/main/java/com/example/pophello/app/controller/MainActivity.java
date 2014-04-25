@@ -18,12 +18,15 @@ import com.example.pophello.app.model.Tag;
 import com.example.pophello.app.model.TagNotification;
 import com.example.pophello.app.model.ZoneManager;
 import com.example.pophello.app.utility.FeatureFlagManager;
+import com.example.pophello.app.utility.MockLocationSequence;
 import com.example.pophello.app.view.TagCreateFragment;
+import com.example.pophello.app.view.TagViewFragment;
 
 public class MainActivity extends ActionBarActivity implements
         ZoneManager.ConnectionCallbacks,
         ZoneManager.OnUpdatedZoneListener,
-        TagCreateFragment.OnTagCreateListener {
+        TagCreateFragment.OnTagCreateListener,
+        TagViewFragment.OnTagViewListener {
 
     private static final String TAG = "MainActivity";
 
@@ -90,6 +93,12 @@ public class MainActivity extends ActionBarActivity implements
         }
     }
 
+    /**
+     * Initialise the UI with either the active tag or a tag create view.
+     *
+     * This method is also called after a tag is acknowledged. In this scenario the Zone Manager
+     * is already connected so there is no need to connect again.
+     */
     private void initUI() {
         Tag tagActive = mZoneManager.getActiveTag();
         if (tagActive == null) {
@@ -100,7 +109,11 @@ public class MainActivity extends ActionBarActivity implements
             mMainView.presentTag(tagActive);
             mStartupMode = StartupMode.TAG;
         }
-        mZoneManager.connectToLocationServices();
+        if (mZoneManager.isConnectedToLocationServices()) {
+            initUIAfterZoneManagerConnected();
+        } else {
+            mZoneManager.connectToLocationServices();
+        }
     }
 
     /**
@@ -109,6 +122,13 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void onZoneManagerConnectedToLocationServices() {
         Log.i(TAG, "connected to the zone manager");
+        if (new FeatureFlagManager(this).isLocationMockingEnabled()) {
+            new MockLocationSequence(mZoneManager).run();
+        }
+        initUIAfterZoneManagerConnected();
+    }
+
+    private void initUIAfterZoneManagerConnected() {
         switch (mStartupMode) {
             case CREATE:
                 ((TagCreateFragment) mMainView.getVisibleFragment()).setZoneManager(mZoneManager);
@@ -199,7 +219,33 @@ public class MainActivity extends ActionBarActivity implements
             return;
         }
         mZoneManager.stopMonitoringLocationChanges();
-        mMainView.presentTagCreationFailure();
+        mMainView.presentServerError();
+    }
+
+    @Override
+    public void onTagAcknowledgementSubmitted() {
+        if (!mIsAppVisible) {
+            return;
+        }
+        mMainView.presentPending();
+    }
+
+    @Override
+    public void onTagAcknowledgementSucceed(String tagId) {
+        mZoneManager.removeTag(tagId);
+        if (!mIsAppVisible) {
+            return;
+        }
+        initUI();
+    }
+
+    @Override
+    public void onTagAcknowledgementFailure() {
+        if (!mIsAppVisible) {
+            return;
+        }
+        mZoneManager.stopMonitoringLocationChanges();
+        mMainView.presentServerError();
     }
 
     /**

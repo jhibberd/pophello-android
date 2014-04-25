@@ -15,18 +15,24 @@ class StoreManager extends android.database.sqlite.SQLiteOpenHelper {
     public static final String COLUMN_LATITUDE = "latitude";
     public static final String COLUMN_LONGITUDE = "longitude";
     public static final String COLUMN_TEXT = "text";
+    public static final String COLUMN_USER_ID = "user_id";
+    public static final String COLUMN_USER_IMAGE_URL = "user_image_url";
 
     private static final String DATABASE_CREATE_TAGS = "create table "
             + TABLE_TAGS + "(" + COLUMN_ID + " text primary key, "
             + COLUMN_LATITUDE + " real not null, "
             + COLUMN_LONGITUDE + " real not null, "
-            + COLUMN_TEXT + " text not null);";
+            + COLUMN_TEXT + " text not null, "
+            + COLUMN_USER_ID + " text not null, "
+            + COLUMN_USER_IMAGE_URL + " text not null);";
 
     private static final String DATABASE_CREATE_TAG_ACTIVE = "create table "
             + TABLE_TAG_ACTIVE + "(" + COLUMN_ID + " text primary key, "
             + COLUMN_LATITUDE + " real not null, "
             + COLUMN_LONGITUDE + " real not null, "
-            + COLUMN_TEXT + " text not null);";
+            + COLUMN_TEXT + " text not null, "
+            + COLUMN_USER_ID + " text not null, "
+            + COLUMN_USER_IMAGE_URL + " text not null);";
 
     private static StoreManager mInstance;
 

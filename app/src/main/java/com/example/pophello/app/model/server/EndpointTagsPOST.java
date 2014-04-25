@@ -7,28 +7,30 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class EndpointContentPOST extends Endpoint {
+public class EndpointTagsPOST extends Endpoint {
 
     public interface OnResponseListener {
-        public void onEndpointContentPOSTResponseSuccess();
-        public void onEndpointContentPOSTResponseFailed();
+        public void onEndpointTagsPOSTResponseSuccess();
+        public void onEndpointTagsPOSTResponseFailed();
     }
 
-    private static final String TAG = "EndpointContentPOST";
+    private static final String TAG = "EndpointTagsPOST";
+    private final String mUserId;
     private final double mLongitude;
     private final double mLatitude;
     private final String mText;
     private final OnResponseListener mListener;
 
-    public EndpointContentPOST(
-            Context context, double longitude, double latitude, String text,
+    public EndpointTagsPOST(
+            Context context, String userId, double longitude, double latitude, String text,
             OnResponseListener listener) {
 
         super(context, HTTPMethod.POST);
-        this.mLongitude = longitude;
-        this.mLatitude = latitude;
-        this.mText = text;
-        this.mListener = listener;
+        mUserId = userId;
+        mLongitude = longitude;
+        mLatitude = latitude;
+        mText = text;
+        mListener = listener;
     }
 
     @Override
@@ -40,6 +42,7 @@ public class EndpointContentPOST extends Endpoint {
     protected JSONObject getRequestBody() {
         try {
             JSONObject result = new JSONObject();
+            result.put("user_id", mUserId);
             result.put("lat", mLatitude);
             result.put("lng", mLongitude);
             result.put("text", mText);
@@ -53,11 +56,11 @@ public class EndpointContentPOST extends Endpoint {
 
     @Override
     protected void onResponseSuccess(JSONObject data) {
-        mListener.onEndpointContentPOSTResponseSuccess();
+        mListener.onEndpointTagsPOSTResponseSuccess();
     }
 
     @Override
     protected void onResponseFailed(JSONObject data) {
-        mListener.onEndpointContentPOSTResponseFailed();
+        mListener.onEndpointTagsPOSTResponseFailed();
     }
 }

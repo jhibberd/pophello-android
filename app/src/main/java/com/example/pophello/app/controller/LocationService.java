@@ -18,6 +18,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationStatusCodes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -72,6 +73,10 @@ public class LocationService implements
         mOnPreciseLocationUpdateListener = preciseLocationUpdateListener;
         mOnUpdatedGeofencesListener = updatedGeofencesListener;
         mLocationUpdateMode = LocationUpdateMode.NONE;
+    }
+
+    public boolean isConnected() {
+        return mLocationClient.isConnected();
     }
 
     public void connect() {
@@ -191,6 +196,29 @@ public class LocationService implements
     @Override
     public void onLocationChanged(Location location) {
         mOnPreciseLocationUpdateListener.onDeviceUpdatedPreciseLocation(location);
+    }
+
+    /**
+     * Remove a single geofence.
+     *
+     * There's not much we can do in the event of a failure so do nothing.
+     */
+    public void removeGeofence(String tagId) {
+        mLocationClient.removeGeofences(
+                Arrays.asList(tagId),
+                new LocationClient.OnRemoveGeofencesResultListener() {
+
+            @Override
+            public void onRemoveGeofencesByRequestIdsResult(int i, String[] strings) {
+                Log.e(TAG, "failed to remove single geofence");
+            }
+
+            @Override
+            public void onRemoveGeofencesByPendingIntentResult(
+                    int i, PendingIntent pendingIntent) {
+                Log.e(TAG, "failed to remove single geofence");
+            }
+        });
     }
 
     public void establishGeofences(Tag[] tagsOld, Tag[] tagsNew) {
@@ -313,5 +341,9 @@ public class LocationService implements
             }
         }
         return result.toArray(new Tag[result.size()]);
+    }
+
+    public void setMockLocation(Location location) {
+        mLocationClient.setMockLocation(location);
     }
 }

@@ -6,8 +6,8 @@ import android.app.FragmentTransaction;
 
 import com.example.pophello.app.R;
 import com.example.pophello.app.view.PendingFragment;
+import com.example.pophello.app.view.ServerErrorFragment;
 import com.example.pophello.app.view.ServiceUnavailableFragment;
-import com.example.pophello.app.view.TagCreateFailureFragment;
 import com.example.pophello.app.view.TagCreateFragment;
 import com.example.pophello.app.view.TagCreateSuccessFragment;
 import com.example.pophello.app.view.TagViewFragment;
@@ -25,7 +25,7 @@ public class MainView {
     }
 
     public void presentTag(Tag tag) {
-        Fragment fragment = TagViewFragment.instance(tag.text);
+        Fragment fragment = TagViewFragment.instance(tag);
         presentFragment(fragment);
     }
 
@@ -39,8 +39,8 @@ public class MainView {
         presentFragment(fragment);
     }
 
-    public void presentTagCreationFailure() {
-        Fragment fragment = new TagCreateFailureFragment();
+    public void presentServerError() {
+        Fragment fragment = new ServerErrorFragment();
         presentFragment(fragment);
     }
 

@@ -17,11 +17,12 @@ import android.widget.Toast;
 
 import com.example.pophello.app.R;
 import com.example.pophello.app.model.ZoneManager;
-import com.example.pophello.app.model.server.EndpointContentPOST;
+import com.example.pophello.app.model.server.EndpointTagsPOST;
+import com.example.pophello.app.utility.CurrentUser;
 
 public class TagCreateFragment extends Fragment implements
         View.OnClickListener,
-        EndpointContentPOST.OnResponseListener {
+        EndpointTagsPOST.OnResponseListener {
 
     public interface OnTagCreateListener {
         public void onTagCreationSubmitted();
@@ -30,9 +31,9 @@ public class TagCreateFragment extends Fragment implements
     }
 
     private static final String TAG = "TagCreateFragment";
-
     private Button mButtonSubmit;
     private EditText mEditTextTag;
+    private String mUserId;
     private ZoneManager mZoneManager;
     private OnTagCreateListener mListener;
 
@@ -61,6 +62,11 @@ public class TagCreateFragment extends Fragment implements
             Log.e(TAG, "failed to find edit text in view");
             return null;
         }
+
+        CurrentUser currentUser = new CurrentUser(getActivity());
+        mUserId = currentUser.getUserId();
+        UserView userView = (UserView) view.findViewById(R.id.user_view);
+        userView.setUser(currentUser.getUserId(), currentUser.getUserImageUrl());
 
         // set focus to the EditText control
         if (mEditTextTag.requestFocus()) {
@@ -131,18 +137,18 @@ public class TagCreateFragment extends Fragment implements
         mButtonSubmit.setEnabled(false);
         mListener.onTagCreationSubmitted();
 
-        new EndpointContentPOST(
-                context, location.getLongitude(), location.getLatitude(), text.toString(),
+        new EndpointTagsPOST(
+                context, mUserId, location.getLongitude(), location.getLatitude(), text.toString(),
                 this).call();
     }
 
     @Override
-    public void onEndpointContentPOSTResponseSuccess() {
+    public void onEndpointTagsPOSTResponseSuccess() {
         mListener.onTagCreationSucceed();
     }
 
     @Override
-    public void onEndpointContentPOSTResponseFailed() {
+    public void onEndpointTagsPOSTResponseFailed() {
         mListener.onTagCreationFailure();
     }
 }

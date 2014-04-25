@@ -20,16 +20,19 @@
             android:name="com.example.pophello.ServerHost"
             android:value="api.soaptag.org" />
         <meta-data
-            android:name="com.example.pophello.Username"
+            android:name="com.example.pophello.UserName"
             android:value="Annie" />
+        <meta-data
+            android:name="com.example.pophello.UserImageUrl"
+            android:value="https://graph.facebook.com/annie.or.kam.fat/picture?width=100&amp;height=100" />
 
         <!-- Feature flags -->
         <meta-data
             android:name="com.example.pophello.FeatureLocationMocking"
-            android:value="false" />
+            android:value="true" />
         <meta-data
             android:name="com.example.pophello.FeatureBugSense"
-            android:value="true" />
+            android:value="false" />
 
         <service
             android:name=".controller.GeofenceTransitionsService"

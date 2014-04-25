@@ -36,6 +36,8 @@ public class TagsStore {
             values.put(StoreManager.COLUMN_LATITUDE, tag.latitude);
             values.put(StoreManager.COLUMN_LONGITUDE, tag.longitude);
             values.put(StoreManager.COLUMN_TEXT, tag.text);
+            values.put(StoreManager.COLUMN_USER_ID, tag.userId);
+            values.put(StoreManager.COLUMN_USER_IMAGE_URL, tag.userImageUrl);
             if (mDatabase.insert(StoreManager.TABLE_TAGS, null, values) == -1) {
                 Log.e(TAG, "failed to write tag to database");
             }
@@ -81,6 +83,15 @@ public class TagsStore {
     }
 
     /**
+     * Remove a single tag from local storage.
+     */
+    public void remove(String tagId) throws LocalStorageUnavailableException {
+        open();
+        mDatabase.delete(
+                StoreManager.TABLE_TAGS, StoreManager.COLUMN_ID + " = ?", new String[] {tagId});
+    }
+
+    /**
      * Remove all tags from local storage.
      */
     public void clear() throws LocalStorageUnavailableException {
@@ -111,6 +122,8 @@ public class TagsStore {
         double latitude = cursor.getDouble(1);
         double longitude = cursor.getDouble(2);
         String text = cursor.getString(3);
-        return new Tag(id, latitude, longitude, text);
+        String userId = cursor.getString(4);
+        String userImageUrl = cursor.getString(5);
+        return new Tag(id, latitude, longitude, text, userId, userImageUrl);
     }
 }

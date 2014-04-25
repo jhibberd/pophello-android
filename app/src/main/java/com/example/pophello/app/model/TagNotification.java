@@ -42,16 +42,17 @@ public class TagNotification {
     public void present(Tag tag) {
 
         Log.i(TAG, "dispatching notification");
+        String message = tag.userId + ": " + tag.text;
         Intent intent = new Intent(mContext, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
         Notification notification = new NotificationCompat.Builder(mContext).
                 setSmallIcon(R.drawable.ic_launcher).
-                setContentTitle(tag.text).
+                setContentTitle(message).
                 setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)).
                 setContentText("PopHello").
                 setAutoCancel(true).
                 setContentIntent(pendingIntent).
-                setTicker(tag.text).
+                setTicker(message).
                 build();
 
         mNotificationManager.cancelAll();

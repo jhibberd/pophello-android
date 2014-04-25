@@ -56,6 +56,10 @@ public class ZoneManager implements
         mLocationUpdateMode = LocationUpdateMode.NONE;
     }
 
+    public boolean isConnectedToLocationServices() {
+        return mLocationService.isConnected();
+    }
+
     public void connectToLocationServices() {
         mLocationService.connect();
     }
@@ -130,7 +134,7 @@ public class ZoneManager implements
 
     public void onExitTagRegion(Tag tag) {
         try {
-            mTagActiveStore.clearIfActive(tag);
+            mTagActiveStore.clearIfActive(tag.id);
         } catch (LocalStorageUnavailableException e) {
             Log.e(TAG, "local storage is unavailable");
         }
@@ -152,6 +156,20 @@ public class ZoneManager implements
             Log.e(TAG, "local storage is unavailable");
             return null;
         }
+    }
+
+    /**
+     * Remove a single tag from a zone, in response to a user acknowledging it.
+     */
+    public void removeTag(String tagId) {
+        try {
+            mTagActiveStore.clearIfActive(tagId);
+            mTagsStore.remove(tagId);
+        } catch (LocalStorageUnavailableException e) {
+            Log.e(TAG, "local storage is unavailable");
+            return;
+        }
+        mLocationService.removeGeofence(tagId);
     }
 
     /**
@@ -192,5 +210,9 @@ public class ZoneManager implements
         mLocationService.disconnect();
         mTagsStore.close();
         mTagActiveStore.close();
+    }
+
+    public void setMockLocation(Location location) {
+        mLocationService.setMockLocation(location);
     }
 }

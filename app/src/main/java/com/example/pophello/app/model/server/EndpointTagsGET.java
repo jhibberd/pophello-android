@@ -10,30 +10,34 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class EndpointContentGET extends Endpoint {
+public class EndpointTagsGET extends Endpoint {
 
     public interface OnResponseListener {
-        public void onEndpointContentGETResponseSuccess(Tag[] tags);
-        public void onEndpointContentGETResponseFailed();
+        public void onEndpointTagsGETResponseSuccess(Tag[] tags);
+        public void onEndpointTagsGETResponseFailed();
     }
 
-    private static final String TAG = "EndpointContentGET";
+    private static final String TAG = "EndpointTagsGET";
+    private final String mUserId;
     private final double mLongitude;
     private final double mLatitude;
     private final OnResponseListener mListener;
 
-    public EndpointContentGET(
-            Context context, double longitude, double latitude, OnResponseListener listener) {
+    public EndpointTagsGET(
+            Context context, String userId, double longitude, double latitude,
+            OnResponseListener listener) {
 
         super(context, HTTPMethod.GET);
-        this.mLongitude = longitude;
-        this.mLatitude = latitude;
-        this.mListener = listener;
+        mUserId = userId;
+        mLongitude = longitude;
+        mLatitude = latitude;
+        mListener = listener;
     }
 
     @Override
     protected void buildURI(Uri.Builder uriBuilder) {
         uriBuilder.path("/tags");
+        uriBuilder.appendQueryParameter("user_id", mUserId);
         uriBuilder.appendQueryParameter("lng", String.valueOf(mLongitude));
         uriBuilder.appendQueryParameter("lat", String.valueOf(mLatitude));
     }
@@ -50,18 +54,20 @@ public class EndpointContentGET extends Endpoint {
                 double lat = dataElement.getDouble("lat");
                 double lng = dataElement.getDouble("lng");
                 String text = dataElement.getString("text");
-                tags[i] = new Tag(id, lat, lng, text);
+                String userId = dataElement.getString("user_id");
+                String userImageUrl = dataElement.getString("user_image_url");
+                tags[i] = new Tag(id, lat, lng, text, userId, userImageUrl);
             }
-            mListener.onEndpointContentGETResponseSuccess(tags);
+            mListener.onEndpointTagsGETResponseSuccess(tags);
 
         } catch (JSONException e) {
             Log.e(TAG, "badly formed response from server");
-            mListener.onEndpointContentGETResponseFailed();
+            mListener.onEndpointTagsGETResponseFailed();
         }
     }
 
     @Override
     protected void onResponseFailed(JSONObject data) {
-        mListener.onEndpointContentGETResponseFailed();
+        mListener.onEndpointTagsGETResponseFailed();
     }
 }

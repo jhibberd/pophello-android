@@ -24,7 +24,8 @@ public abstract class Endpoint {
 
     protected enum HTTPMethod {
         GET,
-        POST
+        POST,
+        DELETE
     }
 
     private static final String TAG = "Endpoint";
@@ -140,6 +141,11 @@ public abstract class Endpoint {
                 switch (mMethod) {
                     case GET:
                         conn.setRequestMethod("GET");
+                        conn.connect();
+                        break;
+
+                    case DELETE:
+                        conn.setRequestMethod("DELETE");
                         conn.connect();
                         break;
 
