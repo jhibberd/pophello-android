@@ -23,6 +23,7 @@ public class MockLocationSequence {
         {1, 1},
         {3, 3},
         {3, 3},
+        {1, 1},
     };
 
     private final ZoneManager mZoneManager;

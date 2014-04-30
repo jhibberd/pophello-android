@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.example.pophello.app.R;
 import com.example.pophello.app.utility.DownloadImageTask;
-import com.example.pophello.app.utility.ImageHelper;
 
 public class UserView extends LinearLayout {
 
@@ -45,7 +44,6 @@ public class UserView extends LinearLayout {
         Bitmap image = Bitmap.createBitmap(
                 layoutParams.width, layoutParams.height, Bitmap.Config.ARGB_8888);
         image.eraseColor(resources.getColor(R.color.user_image_placeholder_color));
-        image = ImageHelper.getRoundedCornerBitmap(image, layoutParams.width / 2);
         mUserImage.setImageBitmap(image);
     }
 

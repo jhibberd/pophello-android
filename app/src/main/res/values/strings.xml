@@ -4,7 +4,7 @@
     <string name="action_settings">Settings</string>
     <string name="button_post_text">Post</string>
     <string name="button_acknowledge_text">Ok</string>
-    <string name="tag_create_success">Tag created :)</string>
+    <string name="tag_create_success">Yay, your tag has been posted. I wonder who will find it.</string>
     <string name="server_error">Uh oh, something went horribly wrong</string>
     <string name="pending">Thinking…</string>
     <string name="service_unavailable_fix">Fix</string>

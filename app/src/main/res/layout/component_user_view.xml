@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@drawable/background_tag"
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
     android:orientation="vertical"
-    android:gravity="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ImageView
         android:id="@+id/userImage"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginBottom="7dp" />
     <TextView
         android:id="@+id/userName"
-        android:maxLines="4"
-        android:gravity="center"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>
