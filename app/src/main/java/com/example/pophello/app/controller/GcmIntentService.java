@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -45,7 +44,7 @@ public class GcmIntentService extends IntentService {
 
         if (!extras.isEmpty()) {
             if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-                String message = extras.toString();
+                String message = extras.getString("message");
                 Log.i(TAG, "Received GCM message: " + message);
                 sendNotification(message);
 
@@ -62,20 +61,18 @@ public class GcmIntentService extends IntentService {
     /**
      * Notify the user that another user has discovered one of their tags.
      */
-    private void sendNotification(String msg) {
+    private void sendNotification(String message) {
+
         NotificationManager notificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
-
         PendingIntent contentIntent = PendingIntent.getActivity(
                 this, 0, new Intent(this, MainActivity.class), 0);
 
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle("GCM Notification")
-                        .setStyle(new NotificationCompat.BigTextStyle()
-                                .bigText(msg))
-                        .setContentText(msg);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+            .setSmallIcon(R.drawable.ic_launcher)
+            .setContentTitle("PopHello")
+            .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
+            .setContentText(message);
 
         builder.setContentIntent(contentIntent);
         notificationManager.notify(NOTIFICATION_ID, builder.build());
