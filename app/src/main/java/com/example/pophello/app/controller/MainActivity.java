@@ -12,6 +12,7 @@ import android.view.Window;
 
 import com.bugsense.trace.BugSenseHandler;
 import com.example.pophello.app.R;
+import com.example.pophello.app.model.GcmRegistrant;
 import com.example.pophello.app.model.MainView;
 import com.example.pophello.app.model.ServiceAvailabilityMonitor;
 import com.example.pophello.app.model.Tag;
@@ -51,12 +52,14 @@ public class MainActivity extends ActionBarActivity implements
             BugSenseHandler.initAndStartSession(MainActivity.this, "33d32cc5");
         }
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
         mZoneManager = new ZoneManager(this, this, this);
         mMainView = new MainView(getFragmentManager());
         mServiceAvailabilityMonitor = new ServiceAvailabilityMonitor(this);
+
+        new GcmRegistrant(this).register();
     }
 
     /**

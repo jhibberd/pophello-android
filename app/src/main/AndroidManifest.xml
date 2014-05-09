@@ -3,9 +3,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.pophello.app" >
 
+    <!-- Location permissions -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
+
+    <!-- GCM permissions -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <permission android:name="com.example.pophello.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.example.pophello.permission.C2D_MESSAGE" />
 
     <application
         android:allowBackup="true"
@@ -34,6 +42,7 @@
             android:name="com.example.pophello.FeatureBugSense"
             android:value="false" />
 
+        <!-- Geofence services -->
         <service
             android:name=".controller.GeofenceTransitionsService"
             android:label="Service"
@@ -44,6 +53,16 @@
             android:label="Service"
             android:exported="false">
         </service>
+
+        <!-- GCM services -->
+        <receiver android:name=".controller.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.example.pophello" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".controller.GcmIntentService" />
 
         <activity
             android:name=".controller.MainActivity"
